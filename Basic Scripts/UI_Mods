@@ -1,0 +1,61 @@
+Name: UI Mods
+Type: gmcp
+Pattern: char.vitals
+
+Description: Adds soaked and stuffed bars (based on code pinned in the Discord code-stuff
+channel by @kalinzia. Fixed a couple bugs and added dark mode to scroll bars.
+
+Execute the following javascript:
+
+(function x(v){
+    //created stuffed and soaked bars, if they don't exist and darken scroll bars
+    if(!$("#food")[0]){
+        $('#statusbars')[0].innerHTML+=
+        `<div id='food'>
+            <div class='progress' style='background-color: #A45500;'></div>
+            <div class='text'></div>
+        </div>
+        <div id='drink'>
+            <div class='progress' style='background-color: #0B3F7D;'></div>
+            <div class='text'></div>
+        </div>`;
+        $('#health')[0].style.width=$('#fatigue')[0].style.width=$('#food')[0].style.width=
+        $('#drink')[0].style.width=$('#mana')[0].style.width="calc(20% - 15px)";
+
+        customizeScrollbars();
+    }
+
+    //update stuffed and soaked bars
+    $("#food .progress")[0].style.width=''+(" orem".indexOf(v.food[11])*25)+'%';
+    $("#food .text")[0].innerText=v.food;
+    var levelsIntox = ['sober', 'tipsy', 'intoxicated', 'drunk', 'tanked', 'blitzed', 
+                        'wasted', 'toasted', 'pissed', 'stoned', 'obliviated'];
+    var intox = v.intoxication;
+    var curLevel = intox.includes(" ") ? intox.split(" ")[1] : intox;
+    $("#drink .progress")[0].style.width=''+(levelsIntox.indexOf(curLevel)*10)+'%';
+    $("#drink .text")[0].innerText=v.intoxication;
+})(mud.gmcp['char.vitals']);
+
+//scroll bar dark mode
+function customizeScrollbars() {
+    // For Chrome, Safari, and Edge
+    const style = document.createElement('style');
+    style.innerHTML = `
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #2a2a2a; 
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: #555; 
+        border-radius: 10px;
+        border: 3px solid #2a2a2a;
+    }
+    `;
+    document.head.appendChild(style);
+
+    // For Firefox
+    document.body.style.scrollbarWidth = 'thin';
+    document.body.style.scrollbarColor = '#555 #2a2a2a';
+}
