@@ -1,0 +1,19 @@
+Name: Show Sidebar
+Type: Alias
+Pattern: sb
+
+Description: On mobile and tablets the sidebar is hidden, but sometimes I wanna see the magic map and the comms window!
+
+Execute the following javascript:
+
+//toggles sidebar
+let sb = $("#sidebar")[0];
+let main = $("#main")[0];
+if(sb.style.display === "block") { //hide
+    main.style.width = "100%";
+    sb.style.display = "none";
+} else { //show sidebar
+    main.style.width = "60%";
+    sb.style.display = "block";
+    sb.style.top = "40px"; 
+}
