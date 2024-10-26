@@ -1,8 +1,8 @@
 +==============================================================================+
 | DESCRIPTION: For fast travel from anywhere along a road                      |
-| MANIFEST: 2 Alias, 1 Trigger                                                  |
+| MANIFEST: 2 Alias, 1 Trigger                                                 |
 | AUTHOR: sarahRosannaBusch                                                    |
-| USAGE: from anywhere on the Orc Road or Mountain Road, do                    |
+| USAGE EXAMPLE: from anywhere on the Orc Road or Mountain Road, do            |
 |        <pathTo sparkle> or <pathTo faerie>                                   |
 | Optional second arg to stop somewhere along the path:                        |
 |        ex: <pathTo faerie orcFortress> to travel from near Sparkle           |
@@ -11,8 +11,9 @@
 
 ----------------------------------------------------------------------------------------------------
 pattern: update_paths
-Execute the following javascript:
+Execute the following javascript, then call <update_paths> before using <pathTo>:
 ----------------------------------------------------------------------------------------------------
+
 gwc.userdata.paths = {  
   //Sparkle to Faerie [0], Faerie to Sparkle [1]
   sparkleFaerie: {
@@ -31,12 +32,67 @@ gwc.userdata.paths = {
     "Qbi6d1":['se', 'nw'], "0EW/H.":['se', 'nw'], "d6MC6.":['se', 'nw'], "5kJ4z1":['e', 'nw'],
     "Eiac1/":['e', 'w'], "iESC40":['se', 'w'], "pxVcX.":['se', 'nw'], "Adahr.":['e', 'nw'],
     "4nzHG0":['se', 'w'], "Zt4Bs/":['se', 'nw']
+  },
+  //to Bree [0], to Grey Havens [1]
+  shire: {
+    //Grey Havens
+    "HVZDw0":['e', 'w'], "SCjtr0":['e', 'w'], "tOSN/1":['e', 'w'],
+    "V/1.T1":['e', 'w'], "5czF7/":['e', 'w'], "fqGQh0":['e', 'w'], "q202h1":['e', 'w'],
+    //Michel Delving
+    "de6Lf/":['e', 'w'], "3G6rS0":['e', 'w'], "njzAf0":['e', 'w'], "W89r4.":['e', 'w'],
+    "FB.r4/":['e', 'w'], "Wnvdx1":['e', 'w'],
+    //Hobbiton
+    "gRUhD.":['e', 'w'], "UjkK1.":['e', 'w'], "h42ff.":['se', 'w'],
+    "pIxwk1":['ne', 'nw'], "YxaL2/":['ne', 'sw'], "LL9Jr0":['e', 'sw'],
+    //Frogmorton
+    "i5j6t/":['e', 'w'], "UbWRq/":['e', 'w'], "xh8350":['e', 'w'], "0316V0":['e', 'w'],
+    "ca6I2.":['e', 'w'], "NHS5Z.":['e', 'w'], "AKe.F.":['e', 'w'], "LQmz1.":['e', 'w'],
+    "v7RhI/":['e', 'w'], "PYeFC.":['e', 'w'], "6mwZD0":['e', 'w'], "Z8x031":['e', 'w'],
+    "V79EG/":['e', 'w'], "oe0bf.":['e', 'w'], "a1bDJ.":['e', 'w'], "LDXli/":['e', 'w'],
+    "WZJQJ0":['e', 'w'], "0N4WJ0":['e', 'w'], "TdEIM/":['e', 'w'],    
+  },
+  //Shire south: to Waymeet [0], to Longbottom [1]
+  nsRoad : {
+    "TJJDW0":['n', 'se'], "8QXvU0":['nw', 'se'], "u58nW0":['nw', 'se'], "7TlO7.":['nw', 'se'], 
+    "q49Ld/":['nw', 'se'], "OxWeh0":['nw', 'se'], "n0vjZ/":['nw', 'se'], "0lZHM/":['nw', 's'], 
+    "SkS5p1":['n', 's'], "QBpWJ/":['n', 's'], "IcS/W.":['n', 's'], "iNWL10":['n', 's'], 
+    "0jmcn/":['n', 's'], "SQdhp1":['n', 's'], "a3mPZ0":['n', 's'], "7NLm30":['n', 's'], 
+    "flYO0.":['n', 'se'], "ZKxp6.":['nw', 'e'], "5Jg8q.":['w', 'e'], "gIkpf1":['w', 'e'], 
+    "j1nGa/":['w', 'e'], "wcGj/0":['w', 'e'], "74PPE/":['w', 'e'], "z98Tv1":['w', 'e'], 
+    "ozyMD0":['w', 'e'], "kh/aR/":['w', 'e'], "G5fLM0":['w', 'e'], "ryG1.0":['w', 'e'], 
+    "Nx2aR0":['w', 'se'], 
+  },
+  gont: {
+    //to Ten Alders [0], to Gont Port [1]
+    //starting off the beach, in the Gont Lowlands
+    "366Hz0":['n', 's'], "kPdsj/":['n', 's'], "dyjX//":['ne', 's'], "bg0961":['nw', 'sw'], 
+    "PSiLw1":['n', 'se'], "XM5ZD1":['n', 's'], "4Bq5/1":['ne', 's'], 
+    //Mountain Path, South
+    "Ish0I.":['n', 'sw'], "/DGb8/":['nw', 's'], "dXKtP.":['nw', 'se'], "rIPAs1":['n', 'se'],
+    "TzOPt.":['ne', 's'], "FqQ5S0":['ne', 'sw'], "W97RD.":['ne', 'sw'], "4ozbp0":['n', 'sw'], 
+    "LtODG1":['ne', 's'], "15ftQ0":['n', 'sw'], 
+    //Mountain Path, North
+    "gc5wX1":['e', 's'], "FogCL1":['ne', 'w'], "eo71X1":['ne', 'sw'], "mbcT/0":['n', 'sw'], 
+    "qPFXX0":['nw', 's'], "qtzo90":['n', 'se'], "9OCgB1":['ne', 's'], "H/VlP0":['nw', 'sw'], 
+    "qOz/g0":['nw', 'se'], "1LZPB1":['n', 'se'], "INNdU0":['n', 's'], "zdhEV/":['nw', 's'], 
+    "z83OS/":['nw', 'se']
+  },
+  krynn: {
+    //to Tantallon [0], to Solace [1]
+    "6qT8D0":['n', 's'], "YoAgA.":['ne', 's'], "c7KyG.":['ne', 'sw'], "ZX2.R/":['ne', 'sw'],
+    "lH04m1":['ne', 'sw'], "tAJ15/":['ne', 'sw'], "dnzcs.":['ne', 'sw'], "tIcLZ1":['ne', 'sw'], 
+    "NL8fj.":['ne', 'sw'], "gy2Tt.":['se', 'sw'], "JjaPZ.":['ne', 'nw'], "kd30m/":['e', 'sw'], 
+    "DTYu..":['e', 'w'], "WY86z1":['ne', 'w'], "IpAZr/":['ne', 'sw'], "2gfAG0":['ne', 'sw'], 
+    "YNNjq.":['nw', 'sw'], "zcslJ/":['ne', 'se'], "ODVRs1":['nw', 'sw'], "je6Ua/":['n', 'se'], 
+    "8ZsBd0":['ne', 's'], "k3vzF/":['ne', 'sw'], "MAKDL.":['ne', 'sw'] 
   }
 }
 gwc.output.append("Your paths have been updated!");
 
 ----------------------------------------------------------------------------------------------------
 pattern: pathTo
+args[1]: end town in direction of travel
+args[2]: optional stopping town along the road
 Execute the following javascript:
 ----------------------------------------------------------------------------------------------------
 
@@ -44,43 +100,65 @@ var dir, road, stop, r = gwc.userdata.paths;
 
 //specify road and direction of travel
 switch(args[1]) {
-  case "faerie": dir = 0; road = r.sparkleFaerie; break;
-  case "sparkle": dir = 1; road = r.sparkleFaerie; break;
-  default: 
-    gwc.output.append("unknown road: " + args[1]); break;
+    //sparkle
+    case "faerie": dir = 0; road = r.sparkleFaerie; break;
+    case "sparkle": dir = 1; road = r.sparkleFaerie; break;
+    //shire
+    case "bree": dir = 0; road = r.shire; break;
+    case "gh": dir = 1; road = r.shire; break;
+    case "waymeet": dir = 0; road = r.nsRoad; break;
+    case "sarnFord": dir = 1; road = r.nsRoad; break;
+    //gont
+    case "tenAlders": dir = 0; road = r.gont; break;
+    case "gont": dir = 1; road = r.gont; break;
+    //krynn
+    case "solace": dir = 1; road = r.krynn; break;
+    case "tantallon": dir = 0; road = r.krynn; break;
+    default: 
+        gwc.output.append("unknown road: " + args[1]); break;
 }
 
 //optionally stop somewhere along the road
 //if omitted you'll travel to the end of the road 
 if(args[2]) {
-  switch(args[2]) {
-    case "orcFortress": stop = "zJmIW/"; break;
-    case "orcCampN": stop = "YzHdl."; break;
-    case "orcCampS": stop = "iESC40"; break;
-    default: 
-      gwc.output.append("unknown stop: " + args[2]); break;
-  }
+    switch(args[2]) {
+        //sparkle
+        case "orcFortress": stop = "zJmIW/"; break;
+        case "orcCampN": stop = "YzHdl."; break;
+        case "orcCampS": stop = "iESC40"; break;
+        //shire
+        case "michDel": stop = "de6Lf/"; break;
+        case "waymeet": stop = "FB.r4/"; break; 
+        case "hobbiton": stop = "Wnvdx1"; break;
+        case "longbottom": stop = "i6lc.."; break;
+        case "frogmorton": stop = "LL9Jr0"; break;
+        case "farm": stop = "ca6I2."; break;
+        case "barrowDowns": stop = "Z8x031"; break;
+        case "crossroads": stop = "WZJQJ0"; break;
+        default: 
+        gwc.output.append("unknown stop: " + args[2]); break;
+    }
 }
 
 gwc.trigger.enable("fast travel");
 
 //called from "fast travel" trigger when entering a new room
 gwc.userdata.paths.move = function(roomId) {  
-  if(road && road[roomId]) {
-    if(stop && (stop === roomId)) {
-      arrive();
-    } else {
-      //move to next room
-      gwc.connection.send(road[roomId][dir]);
+    if(road && road[roomId]) {
+        if(stop && (stop === roomId)) {
+            arrive();
+        } else {
+            //move to next room
+            gwc.connection.send(road[roomId][dir]);
+        }
+    } else { //you're not on the road anymore
+        arrive();
     }
-  } else { //you're not on the road anymore
-    arrive();
-  }
 };
 
 function arrive() {
-  gwc.output.append("End of the road.");
-  gwc.trigger.disable("fast travel");
+    gwc.output.append("End of the road.");
+    gwc.trigger.disable("fast travel");
 }
 
 //start moving
