@@ -1,0 +1,313 @@
++==============================================================================+
+| DESCRIPTION: Collect and sort herbs                                          |
+| MANIFEST: 1 Trigger, 3 Alias                                                 |
+| AUTHOR: sarahRosannaBusch                                                    |
+| DEPENDENCIES: update_paths from AdvancedScripts/pathing                      |
+|                                                                              |
+| WARNING: Use at your own risk! Don't leave your bots unnattended.            |
+|          See <help botting> in game for rules and consequences               |
+|                                                                              |
++==============================================================================+
+
+--------------------------------------------------------------------------------------------
+Name: herbing
+Type: regexp
+Pattern: (find no herbs|You find a|Your search reveals nothing special.)
+--------------------------------------------------------------------------------------------
+
+gwc.output.color("gold");
+if(gwc.userdata.herbing) {
+    gwc.userdata.searched--;
+    if(gwc.userdata.searched) {
+        gwc.connection.send("shh");
+    } else {
+        gwc.output.append("searched thrice");
+        gwc.userdata.searched = 2; //search 2 times
+        gwc.userdata.autoHerb(); //move to new room
+    }
+}
+
+
+----------------------------------------------------------------------------------------------------
+Pattern: auto_herb
+args[1]: name of road (sparkle, gont, shire, krynn) | off
+Execute the following javascript:
+----------------------------------------------------------------------------------------------------
+
+gwc.userdata.herbing = true;
+var road, dir = 0;
+switch(args[1]) {
+    case "sparkle": road = gwc.userdata.paths.sparkleFaerie; break;
+    case "gont": road = gwc.userdata.paths.gont; break;
+    case "shire": road = gwc.userdata.paths.nsRoad; break;
+    case "krynn": road = gwc.userdata.paths.krynn; break;
+    case "off": gwc.userdata.herbing = false; break;
+    default: gwc.output.append("unknown road: " + args[1]); break;
+}
+gwc.output.append("herbing in " + args[1]);
+
+gwc.userdata.autoHerb = function() {  
+    var roomId = gwc.gmcp.data.room.id;
+    if(road[roomId]) {
+        gwc.connection.send(road[roomId][dir]);
+        gwc.connection.send("shh");
+    } else {
+        gwc.userdata.herbing = false;
+        gwc.output.append("End of the road");
+    }
+}
+
+
+---------------------------------------------------------------------------------------------------
+Pattern: update_herbs
+DESCRIPTION: lists of herb names in plural form. Rearrange lists as needed.
+Execute the following javascript:
+
+----------------------------------------------------------------------------------------------------
+gwc.userdata.herbs = {    
+    heals:["attanars", "white blooms", "lianor berries", "morels", "oakmosses", "sebres","oedes"],
+    
+    stims:["chicories","licorices"],
+    
+    mana:["suranies", "ginsengs"],
+
+    buffs:["astaldos", "cladinas", "handasses", "sparkweeds", 
+    "tuos", "yarrows", "fireweeds",
+    "aspen barks", "bergamots", "foxgloves", "monkshoods", "pindans", "skunk berries", 
+    "wintergreens", "bilberries", "onocleas"], 
+    
+    cures:["catnips", "goats rues", "marigolds", "savories", "ungolestels", "grey willows", "maroeas", "elidross", "lobelias"],
+
+    foods:["clovers", "portabellos", "sarsaparillas", "orange carrots", "black currants",  
+    "breadroots", "red potatoes", "cucumbers", "green onions",
+    "paramols", "asparagus", "beans", "cattails", "chives"],
+
+    cooks:["mints", "basils", "oreganos", "thymes", "sages", "laurels",
+    "marjorams", "chervils", "cloves", "saffrons", "rosemaries", "tarragons", "dills",
+    "caraways", "chives", "parsleys", "gingers", "fennels"],
+
+    poison:["myrtleberries", "tiger lilies",
+    "camas", "locoweeds", "hemlocks", "labrador teas", "hops", "amanitas", 
+    "cedar barks", 
+    "columbines", "fungiarbos", "horsetails", "pawnroses", "black potatoes","green slimes", 
+            "hellebore stinkworts", "skullcaps", "angurths"],
+
+    trash:["redweeds", "blungs", "holly berries", "beaked sedges", 
+    "huckleberries", "tangleshoots", "simbelmynes", 
+    "lothores", "corn pollens", "tomatoes", 
+    "coccineas", "khuzs",
+    "red raspberries", "blueberries", "lamias", "saskatoons",
+    "large blue flowers", "wild strawberries", "blackberries",
+    "chokecherries", "dandelions", "laranthas", "burs", 
+    "paramols", "rushwashes",  "wild plums", "bunchberries", "hawthorns", 
+    "hazelnuts", "frosty raspberries",
+    "blackroots", "nasturtiums", "adillyp weeds",   
+    "small purple berries", "calendulas", "redwoods",
+    "fiddleheads", 
+    "tyelkas", "seregons", "chantrelles", "garlics",
+    "evendim grasses", "molies", "pendick-flowers", 
+    "lady's slippers", "crocus", "witch grasses",
+    "poison ivies", "angeltears", "brown slimes", "green pines", "strawberries", "solinaiths"]
+};
+gwc.output.append("Your herbs have been updated!");
+
+
+--------------------------------------------------------------------------------------------
+Pattern: sort_shit
+NOTE: You will want to update these lists based on your herbing level and needs
+Execute the following javascript:
+----------------------------------------------------------------------------------------------------
+
+var keepContainer = "jar";
+var sellContainer = "leather pouch"; 
+
+var cures = gwc.userdata.herbs.cures;
+var buffs = gwc.userdata.herbs.buffs;
+var heals = gwc.userdata.herbs.heals;
+var stims = gwc.userdata.herbs.stims;
+var mana = gwc.userdata.herbs.mana;
+var foods = gwc.userdata.herbs.foods;
+var cooks = gwc.userdata.herbs.cooks;
+var poison = gwc.userdata.herbs.poison;
+var trash = gwc.userdata.herbs.trash;
+
+var keep = cures.concat(buffs, heals, stims, mana);
+var sell = trash.concat(cooks, poison, foods);
+
+//fill keep bag
+gwc.connection.send("open " + keepContainer);
+var len = keep.length;
+for(var i = 0; i < len; i++) {
+  gwc.connection.send("put " + keep[i] + " in " + keepContainer);
+}
+
+//fill sell bag
+gwc.connection.send("open " + sellContainer); //todo: this doesn't work. Say's "Open what?"
+var len = sell.length;
+for(var i = 0; i < len; i++) {
+  gwc.connection.send("put " + sell[i] + " in " + sellContainer); //but this does work...
+}
+
+--------------------------------------------------------------------------------------------
+
+HERB JAR FROM TEN ALDERS - Descriptions, Type, Strength
+
+  Herb (Restore)     Description                        Type       Str    Qty  
++------------------+----------------------------------+----------+------+-----+
+| angeltear        | pale white mushroom              | mana     | min  |   9 |
+| attanar          | little blue berry                | health   | maj  |  35 |
+| basil            | handful of small dark green leav | fatigue  | min  |   2 |
+| black currant    | black shiny berry                | fatigue  | min  |   5 |
+| blung            | purple-green shaggy moss         | fatigue  | min  |   3 |
+| breadroot        | thick brown root                 | fatigue  | min  |   2 |
+| brown slime      | slimy brown alga                 | health   | min  |  15 |
+| blackberry       | little black berry               | fatigue  | min  |   3 |
+| blackroot        | black fiberous root              | health   | min  |  27 |
+| blue gentian flo | large blue flower                | health   | min  |   1 |
+| blueberry        | little blue berry                | fatigue  | min  |   2 |
+| bunchberry       | veined oval leaf                 | fatigue  | min  |  37 |
+| calendula        | delicate yellow flower           | health   | min  |   1 |
+| caraway          | handful of small brown aromatic  | fatigue  | min  |   1 |
+| cattail          | thick brown root                 | fatigue  | min  |   1 |
+| chantrelle       | puffy yellow mushroom            | mana     | min  |   8 |
+| chervil          | handful of small fine leaves     | fatigue  | min  |   9 |
+| chicory          | sharp short leaf                 | fatigue  | norm |  37 |
+| chives           | bunch of slender green leaves    | health   | min  |   2 |
+| cinquefoil       | silvery weed                     | health   | min  |   2 |
+| dandelion        | serrated leaf                    | fatigue  | min  |   6 |
+| dill             | handful of feathery leaves       | fatigue  | min  |   3 |
+| fennel           | handful of fine threadlike leave | fatigue  | min  |   3 |
+| fiddlehead       | unfurling green frond            | health   | min  |  25 |
+| frosty raspberry | frosty red berry                 | fatigue  | min  |  13 |
+| garlic           | mild smelly white rose-tinged bu | health   | min  |   2 |
+| ginseng          | forked root                      | mana     | maj  |  12 |
+| green onion      | little green onion               | fatigue  | min  |   6 |
+| green pine       | resinous amber sap               | mana     | min  |   1 |
+| hawthorn         | red berry                        | fatigue  | min  |  11 |
+| hazelnut         | hard enbracted nut               | fatigue  | min  |  20 |
+| holly berry      | little red berry                 | fatigue  | min  |   9 |
+| huckleberry      | green berry                      | health   | min  |   1 |
+| lamia            | long rough leaf                  | health   | min  |   6 |
+| laurel           | stiff dark green leaf            | fatigue  | min  |   5 |
+| lianor berry     | small purple berry               | health   | norm |   6 |
+| licorice         | strong-smelling gnarled root     | fatigue  | norm |   1 |
+| lothore          | red heart-shaped flower          | health   | min  |   2 |
+| marjoram         | broad flowery umbel              | fatigue  | min  |  10 |
+| mint             | handful of narrow sharply toothe | fatigue  | min  |  13 |
+| morel            | spongelike fungus                | mana     | norm |   5 |
+| oakmoss          | piece of brown lichen            | mana     | norm |  10 |
+| oede             | broad golden leaf                | health   | maj  |   1 |
+| orange carrot    | green-topped orange carrot       | fatigue  | min  |   3 |
+| oregano          | handful of stalked ovate leaves  | fatigue  | min  |   2 |
+| paramol          | yellow fruit                     | fatigue  | min  |  12 |
+| parsley          | green leaf                       | health   | min  |   2 |
+| red potato       | little red potato                | fatigue  | min  |   1 |
+| red raspberry    | little red berry                 | panic    | min  |   6 |
+| redweed          | red weed                         | fatigue  | min  |   4 |
+| redwood leaf     | red leaf                         | health   | min  |   1 |
+| rushwash         | bunch of leaves                  | fatigue  | min  |  23 |
+| sage             | handful of tubular two-lipped fl | fatigue  | min  |   1 |
+| saskatoon        | little blue berry                | fatigue  | min  |   3 |
+| sebre            | blue flower                      | mana     | norm |   2 |
+| simbelmyne       | small white flower               | mana     | min  |   1 |
+| strawberry       | large red berry                  | health   | min  |   1 |
+| suranie          | small red berry                  | mana     | maj  |  13 |
+| three-leaf clove | small trifoliate leaf            | health   | min  |   7 |
+| tarragon         | handful of small bitter leaves   | fatigue  | min  |   3 |
+| thyme            | handful of pungent narrow leaves | fatigue  | min  |  11 |
+| white hallow     | white blossom                    | health   | maj  |  31 |
+| wild cucumber    | prickly green fruit              | fatigue  | min  |   1 |
+| wild plum        | smooth purplish fruit            | fatigue  | min  |  28 |
++------------------+----------------------------------+----------+------+-----+
+
+  Herb (Enhance)     Description                        Type       Str    Qty  
++------------------+----------------------------------+----------+------+-----+
+| adillyp weed     | river weed                       | con      | min  |   6 |
+| astaldo          | brown broad-headed mushroom      | dis      | norm |  17 |
+| cladina          | coral-like grey lichen           | con      | norm |  43 |
+| evendim grass    | green straw                      | dex      | min  |  17 |
+| fireweed         | showy purple flower              | fire     | norm |   7 |
+| handasse         | small green-yellow mushroom      | int      | maj  |  19 |
+| onoclea          | simple delicate fern             | dis      | norm |   2 |
+| laranthas        | small green wrinkled berry       | str      | min  |   1 |
+| khuz             | twisted brown root               | dis      | min  |   7 |
+| moly             | lilac bulb                       | magic    | min  |  30 |
+| pendick-flower   | red flower                       | wis      | min  |  26 |
+| seregon          | bunch of small hardy blood-red f | magic    | min  |   1 |
+| solinaith        | dusty white leaf                 | magic    | min  |   3 |
+| sparkweed        | yellow-red flower                | fire     | norm |  22 |
+| tuo              | piece of pale green lichen       | str      | maj  |   7 |
+| yarrow           | pinkish flower                   | con      | norm |  11 |
++------------------+----------------------------------+----------+------+-----+
+
+  Herb (Cure)        Description                        Type       Str    Qty  
++------------------+----------------------------------+----------+------+-----+
+| catnip           | handful of aromatic pale purplis | dollost  | maj  |  19 |
+| elidross         | delicate pale blue flower        | kapak_sa | maj  |   1 |
+| goats rue        | pale whitish-blue flower         | all      | min  |  10 |
+| grey willow      | grey bark                        | mana     | norm |   8 |
+| lobelia          | pale lavender flower             | all      | norm |   1 |
+| marigold         | bright yellow flower             | mosquito | maj  |  23 |
+| maroea           | yellow drooping flower           | all      | maj  |   5 |
+| savory           | handful of small stiff aromatic  | bee      | maj  |   3 |
+| ungolestel       | brown patch of moss              | spider   | maj  |  22 |
++------------------+----------------------------------+----------+------+-----+
+
+  Herb (Harmful)     Description                        Type       Str    Qty  
++------------------+----------------------------------+----------+------+-----+
+| beaked sedge     | elongated slender leaf           | health   | neg  |   3 |
+| columbine        | emerald green leaf               | health   | neg  |   2 |
+| common hop       | woody twining vine               | mana     | neg  |   4 |
+| fungiarbo        | brown tree mushroom              | health   | neg  |   3 |
+| green slime      | slimy green alga                 | health   | neg  |  11 |
+| horsetail        | gritty slender stalk             | health   | neg  |   3 |
+| pawnrose         | green rose                       | health   | neg  |  36 |
++------------------+----------------------------------+----------+------+-----+
+
+  Herb (Poison)      Description                        Type       Str    Qty  
++------------------+----------------------------------+----------+------+-----+
+| amanita          | snow-white mushroom              | herb     | maj  |   8 |
+| black potato     | little black potato              | black po | norm |  10 |
+| crocus           | pale purplish flower             | mana     | min  |   3 |
+| hellebore stinkw | stinking buttercup               | herb     | min  |   1 |
+| hemlock          | handful of green berries         | paralyze | norm |  11 |
+| labrador tea     | fuzzy rusty leaf                 | fatigue  | min  |   1 |
+| lady's slipper   | enchanting shoe-shaped flower    | mana     | min  |   4 |
+| locoweed         | purple hoary flower              | mana     | norm |   3 |
+| myrtleberry      | translucent red berry            | fatigue  | maj  |   5 |
+| skullcap         | rotting black mushroom           | health   | min  |   7 |
+| smooth camas     | linear keeled leaf               | herb     | maj  |   4 |
+| sumac            | red oily vine                    | sumac    | norm |   1 |
+| tiger lily       | black-speckled orange flower     | fatigue  | norm |  10 |
+| witch grass      | purple blade of grass            | herb     | min  |   7 |
++------------------+----------------------------------+----------+------+-----+
+
+  Herb (Special)     Description                        Type       Str    Qty  
++------------------+----------------------------------+----------+------+-----+
+| aspen bark       | piece of white bark              |    -     |  -   |  18 |
+| bergamot         | small pear-shaped fruit          |    -     |  -   |  11 |
+| bilberry         | small black berry                |    -     |  -   |  13 |
+| curugwath        | silvery leaf                     |    -     |  -   |   1 |
+| foxglove         | handful of purple flowers        |    -     |  -   |  17 |
+| monkshood        | small tuberous root              |    -     |  -   |   5 |
+| pindan           | handful of grey moss             |    -     |  -   |   1 |
+| pot              | brown grass                      |    -     |  -   |   1 |
+| skunk berries    | handful of small purple berries  |    -     |  -   |   5 |
+| wintergreen leaf | oval-shaped leaf                 |    -     |  -   |   1 |
++------------------+----------------------------------+----------+------+-----+
+
+  Unidentified       Description                        Type       Str    Qty  
++------------------+----------------------------------+----------+------+-----+
+|         -        | cluster of blood-red flowers     |    -     |  -   |   1 |
+|         -        | licorice-scented pliable root    |    -     |  -   |   7 |
+|         -        | twisted thorned vine             |    -     |  -   |   4 |
+|         -        | gray fuzzy leaf                  |    -     |  -   |   1 |
+|   Ronwath vine   | long tangled vine                |    -     |  -   |   3 |
+|         -        | cluster of blood-red flowers     |    -     |  -   |   1 |
++------------------+----------------------------------+----------+------+-----+
+
++------------------+----------------------------------+----------+------+-----+
+| chives           | bunch of slender green leaves    | health   | min  |   1 |
+| cinquefoil       | silvery weed                     | health   | min  |   2 |
+| redwood leaf     | red leaf                         | health   | min  |   1 |
++------------------+----------------------------------+----------+------+-----+
